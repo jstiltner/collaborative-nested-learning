@@ -8,9 +8,17 @@ The paper's information flow is unidirectional (fast → medium → slow).
 We add explicit bidirectional bridges with learned gating.
 """
 
-from src.bridges.knowledge_bridges import (
-    KnowledgeBridge,
-    CollaborativeNestedOptimizer,
-)
-
 __all__ = ["KnowledgeBridge", "CollaborativeNestedOptimizer"]
+
+
+def __getattr__(name):
+    """Lazy import to avoid circular dependencies."""
+    if name == "KnowledgeBridge":
+        from src.bridges.knowledge_bridges import KnowledgeBridge
+
+        return KnowledgeBridge
+    elif name == "CollaborativeNestedOptimizer":
+        from src.bridges.knowledge_bridges import CollaborativeNestedOptimizer
+
+        return CollaborativeNestedOptimizer
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

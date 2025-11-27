@@ -5,13 +5,13 @@ This module provides:
 - Metrics: Forgetting, accuracy, forward/backward transfer
 """
 
-from benchmarks.split_mnist import SplitMNIST, create_split_mnist_loaders
 from benchmarks.metrics import (
     compute_accuracy,
+    compute_backward_transfer,
     compute_forgetting,
     compute_forward_transfer,
-    compute_backward_transfer,
 )
+from benchmarks.split_mnist import SplitMNIST, create_split_mnist_loaders
 
 __all__ = [
     "SplitMNIST",

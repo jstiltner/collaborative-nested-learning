@@ -14,7 +14,7 @@ propagation from fast directly to slow memory.
 import json
 import os
 from datetime import datetime
-from typing import Dict, Any, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import torch
 import torch.nn as nn
@@ -22,8 +22,8 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader, TensorDataset
 
 from benchmarks.split_mnist import SplitMNIST
-from src.optimizers.collaborative_cms import CollaborativeCMSOptimizer
 from src.memory.continuum import CMSConfig
+from src.optimizers.collaborative_cms import CollaborativeCMSOptimizer
 
 
 def create_model():
@@ -47,11 +47,11 @@ def run_single_experiment(
 ) -> Dict[str, Any]:
     """Run a single experiment with specified configuration."""
     torch.manual_seed(seed)
-    
+
     # Create model and benchmark
     model = create_model()
-    benchmark = SplitMNIST(root='./data', num_tasks=num_tasks, batch_size=64)
-    
+    benchmark = SplitMNIST(root="./data", num_tasks=num_tasks, batch_size=64)
+
     # Create optimizer with specified adjacent_only setting
     cms_config = CMSConfig(
         regularization_strength=reg_strength,
@@ -59,7 +59,7 @@ def run_single_experiment(
         medium_frequency=10,
         slow_frequency=50,
     )
-    
+
     optimizer = CollaborativeCMSOptimizer(
         model.parameters(),
         cms_config=cms_config,
@@ -71,15 +71,15 @@ def run_single_experiment(
         adjacent_only=adjacent_only,  # KEY PARAMETER
         hidden_dim=64,
     )
-    
+
     # Track accuracy matrix: acc[i][j] = accuracy on task j after training on task i
     accuracy_matrix = [[0.0] * num_tasks for _ in range(num_tasks)]
-    
+
     # Train on each task
     for task_id in range(num_tasks):
         train_loader, test_loader = benchmark.get_task(task_id)
         optimizer.set_task(task_id)
-        
+
         # Train
         model.train()
         for epoch in range(epochs_per_task):
@@ -91,7 +91,7 @@ def run_single_experiment(
                 total_loss = loss + reg_loss
                 total_loss.backward()
                 optimizer.step()
-        
+
         # Evaluate on all tasks seen so far
         model.eval()
         with torch.no_grad():
@@ -106,24 +106,24 @@ def run_single_experiment(
                     total += len(y)
                 accuracy = correct / total
                 accuracy_matrix[task_id][eval_task_id] = accuracy
-    
+
     # Compute metrics
     # Final accuracy: average accuracy on all tasks after training on all
     final_accuracy = sum(accuracy_matrix[-1]) / num_tasks
-    
+
     # Forgetting: average drop from max accuracy to final accuracy
     forgetting = 0.0
     for j in range(num_tasks - 1):
         max_acc = max(accuracy_matrix[i][j] for i in range(j, num_tasks))
         final_acc = accuracy_matrix[-1][j]
         forgetting += max_acc - final_acc
-    forgetting /= (num_tasks - 1)
-    
+    forgetting /= num_tasks - 1
+
     return {
-        'final_accuracy': final_accuracy,
-        'forgetting': forgetting,
-        'accuracy_matrix': accuracy_matrix,
-        'bridge_stats': {k: v for k, v in optimizer.get_bridge_stats().items()},
+        "final_accuracy": final_accuracy,
+        "forgetting": forgetting,
+        "accuracy_matrix": accuracy_matrix,
+        "bridge_stats": {k: v for k, v in optimizer.get_bridge_stats().items()},
     }
 
 
@@ -131,7 +131,7 @@ def run_adjacent_ablation():
     """Run full ablation comparing adjacent-only vs full bridges."""
     strengths = [1.0, 2.0, 5.0, 10.0]
     results = {}
-    
+
     print("=" * 60)
     print("ADJACENT-ONLY BRIDGE ABLATION STUDY")
     print("=" * 60)
@@ -139,10 +139,10 @@ def run_adjacent_ablation():
     print("  - Full Bridges: fast↔medium, medium↔slow, fast↔slow (6 directions)")
     print("  - Adjacent-Only: fast↔medium, medium↔slow (4 directions)")
     print()
-    
+
     for strength in strengths:
         print(f"\n--- Regularization Strength: {strength} ---")
-        
+
         # Full bridges (baseline)
         print("  Running: Full Bridges (6 directions)...", end=" ", flush=True)
         full_result = run_single_experiment(
@@ -150,7 +150,7 @@ def run_adjacent_ablation():
             reg_strength=strength,
         )
         print(f"acc={full_result['final_accuracy']:.4f}")
-        
+
         # Adjacent-only bridges
         print("  Running: Adjacent-Only Bridges (4 directions)...", end=" ", flush=True)
         adj_result = run_single_experiment(
@@ -158,74 +158,90 @@ def run_adjacent_ablation():
             reg_strength=strength,
         )
         print(f"acc={adj_result['final_accuracy']:.4f}")
-        
+
         # Compute differences
-        acc_diff = adj_result['final_accuracy'] - full_result['final_accuracy']
-        forget_diff = adj_result['forgetting'] - full_result['forgetting']
-        
+        acc_diff = adj_result["final_accuracy"] - full_result["final_accuracy"]
+        forget_diff = adj_result["forgetting"] - full_result["forgetting"]
+
         results[str(strength)] = {
-            'full_bridges': {
-                'final_accuracy': full_result['final_accuracy'],
-                'forgetting': full_result['forgetting'],
+            "full_bridges": {
+                "final_accuracy": full_result["final_accuracy"],
+                "forgetting": full_result["forgetting"],
             },
-            'adjacent_only': {
-                'final_accuracy': adj_result['final_accuracy'],
-                'forgetting': adj_result['forgetting'],
+            "adjacent_only": {
+                "final_accuracy": adj_result["final_accuracy"],
+                "forgetting": adj_result["forgetting"],
             },
-            'diff': {
-                'accuracy': acc_diff,
-                'forgetting': forget_diff,
-            }
+            "diff": {
+                "accuracy": acc_diff,
+                "forgetting": forget_diff,
+            },
         }
-        
+
         print(f"\n  Results at strength={strength}:")
-        print(f"    Full Bridges:    acc={full_result['final_accuracy']:.4f}, "
-              f"forget={full_result['forgetting']:.4f}")
-        print(f"    Adjacent-Only:   acc={adj_result['final_accuracy']:.4f}, "
-              f"forget={adj_result['forgetting']:.4f}")
-        
+        print(
+            f"    Full Bridges:    acc={full_result['final_accuracy']:.4f}, "
+            f"forget={full_result['forgetting']:.4f}"
+        )
+        print(
+            f"    Adjacent-Only:   acc={adj_result['final_accuracy']:.4f}, "
+            f"forget={adj_result['forgetting']:.4f}"
+        )
+
         # Interpret results
-        acc_better = "✓ BETTER" if acc_diff > 0 else "✗ worse" if acc_diff < 0 else "= same"
-        forget_better = "✓ BETTER" if forget_diff < 0 else "✗ worse" if forget_diff > 0 else "= same"
-        
+        acc_better = (
+            "✓ BETTER" if acc_diff > 0 else "✗ worse" if acc_diff < 0 else "= same"
+        )
+        forget_better = (
+            "✓ BETTER"
+            if forget_diff < 0
+            else "✗ worse" if forget_diff > 0 else "= same"
+        )
+
         print(f"    Adjacent-only accuracy:   {acc_diff:+.4f} ({acc_better})")
         print(f"    Adjacent-only forgetting: {forget_diff:+.4f} ({forget_better})")
-    
+
     # Summary
     print("\n" + "=" * 60)
     print("SUMMARY")
     print("=" * 60)
-    
-    acc_wins = sum(1 for s in strengths if results[str(s)]['diff']['accuracy'] > 0)
-    forget_wins = sum(1 for s in strengths if results[str(s)]['diff']['forgetting'] < 0)
-    
+
+    acc_wins = sum(1 for s in strengths if results[str(s)]["diff"]["accuracy"] > 0)
+    forget_wins = sum(1 for s in strengths if results[str(s)]["diff"]["forgetting"] < 0)
+
     print(f"\nAdjacent-only improves accuracy in {acc_wins}/{len(strengths)} settings")
-    print(f"Adjacent-only reduces forgetting in {forget_wins}/{len(strengths)} settings")
-    
+    print(
+        f"Adjacent-only reduces forgetting in {forget_wins}/{len(strengths)} settings"
+    )
+
     # Detailed breakdown
     print("\n--- Detailed Results ---")
-    print(f"{'Strength':<10} {'Full Acc':<12} {'Adj Acc':<12} {'Diff':<10} {'Full Fgt':<12} {'Adj Fgt':<12} {'Diff':<10}")
+    print(
+        f"{'Strength':<10} {'Full Acc':<12} {'Adj Acc':<12} {'Diff':<10} {'Full Fgt':<12} {'Adj Fgt':<12} {'Diff':<10}"
+    )
     print("-" * 80)
     for strength in strengths:
         r = results[str(strength)]
-        print(f"{strength:<10} "
-              f"{r['full_bridges']['final_accuracy']:<12.4f} "
-              f"{r['adjacent_only']['final_accuracy']:<12.4f} "
-              f"{r['diff']['accuracy']:+<10.4f} "
-              f"{r['full_bridges']['forgetting']:<12.4f} "
-              f"{r['adjacent_only']['forgetting']:<12.4f} "
-              f"{r['diff']['forgetting']:+<10.4f}")
-    
+        print(
+            f"{strength:<10} "
+            f"{r['full_bridges']['final_accuracy']:<12.4f} "
+            f"{r['adjacent_only']['final_accuracy']:<12.4f} "
+            f"{r['diff']['accuracy']:+<10.4f} "
+            f"{r['full_bridges']['forgetting']:<12.4f} "
+            f"{r['adjacent_only']['forgetting']:<12.4f} "
+            f"{r['diff']['forgetting']:+<10.4f}"
+        )
+
     # Save results
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     results_path = f"experiments/results/adjacent_ablation_{timestamp}.json"
     os.makedirs(os.path.dirname(results_path), exist_ok=True)
-    
-    with open(results_path, 'w') as f:
+
+    with open(results_path, "w") as f:
         json.dump(results, f, indent=2, default=str)
-    
+
     print(f"\nResults saved to: {results_path}")
-    
+
     return results
 
 

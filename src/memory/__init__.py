@@ -7,8 +7,8 @@ Reference: Nested Learning (Behrouz et al., NeurIPS 2025)
 https://abehrouz.github.io/files/NL.pdf
 """
 
-from src.memory.memory_bank import MemoryBank
 from src.memory.continuum import ContinuumMemorySystem
+from src.memory.memory_bank import MemoryBank
 from src.memory.multi_scale_cms import MultiScaleCMS, MultiScaleCMSConfig
 
 __all__ = [

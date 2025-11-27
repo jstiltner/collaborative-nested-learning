@@ -16,13 +16,38 @@ Our Novel Contribution:
 - Fast memory can teach medium, slow can guide fast
 """
 
-from src.optimizers import DeepMomentumOptimizer, NestedOptimizer
-from src.bridges import KnowledgeBridge, CollaborativeNestedOptimizer
-
 __version__ = "0.1.0"
+
+# Lazy imports to avoid circular dependencies
+# Users should import directly from submodules:
+#   from src.optimizers.deep_momentum import DeepMomentumOptimizer
+#   from src.optimizers.nested_optimizer import NestedOptimizer
+#   from src.bridges.knowledge_bridges import KnowledgeBridge, CollaborativeNestedOptimizer
+
 __all__ = [
     "DeepMomentumOptimizer",
     "NestedOptimizer",
     "KnowledgeBridge",
     "CollaborativeNestedOptimizer",
 ]
+
+
+def __getattr__(name):
+    """Lazy import to avoid circular dependencies."""
+    if name == "DeepMomentumOptimizer":
+        from src.optimizers.deep_momentum import DeepMomentumOptimizer
+
+        return DeepMomentumOptimizer
+    elif name == "NestedOptimizer":
+        from src.optimizers.nested_optimizer import NestedOptimizer
+
+        return NestedOptimizer
+    elif name == "KnowledgeBridge":
+        from src.bridges.knowledge_bridges import KnowledgeBridge
+
+        return KnowledgeBridge
+    elif name == "CollaborativeNestedOptimizer":
+        from src.bridges.knowledge_bridges import CollaborativeNestedOptimizer
+
+        return CollaborativeNestedOptimizer
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

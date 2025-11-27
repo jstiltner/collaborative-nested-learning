@@ -5,6 +5,7 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)](https://pytorch.org/)
+[![Tests](https://github.com/jstiltner/collaborative-nested-learning/actions/workflows/tests.yml/badge.svg)](https://github.com/jstiltner/collaborative-nested-learning/actions/workflows/tests.yml)
 
 Implementation of Google's [Nested Learning](https://abehrouz.github.io/files/NL.pdf) (NeurIPS 2025) with a **novel extension**: bidirectional knowledge bridges that enable explicit cross-timescale learning.
 
