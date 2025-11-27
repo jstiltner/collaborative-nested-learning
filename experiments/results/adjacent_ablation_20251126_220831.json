@@ -1,0 +1,58 @@
+{
+  "1.0": {
+    "full_bridges": {
+      "final_accuracy": 0.1923348461926374,
+      "forgetting": 0.9769267661226095
+    },
+    "adjacent_only": {
+      "final_accuracy": 0.19172970247100354,
+      "forgetting": 0.9806458070806616
+    },
+    "diff": {
+      "accuracy": -0.0006051437216338662,
+      "forgetting": 0.003719040958052089
+    }
+  },
+  "2.0": {
+    "full_bridges": {
+      "final_accuracy": 0.18880484114977308,
+      "forgetting": 0.9675940817469633
+    },
+    "adjacent_only": {
+      "final_accuracy": 0.19172970247100354,
+      "forgetting": 0.9708018056367274
+    },
+    "diff": {
+      "accuracy": 0.0029248613212304597,
+      "forgetting": 0.0032077238897640914
+    }
+  },
+  "5.0": {
+    "full_bridges": {
+      "final_accuracy": 0.18860312657589512,
+      "forgetting": 0.9009800579141187
+    },
+    "adjacent_only": {
+      "final_accuracy": 0.18850226928895614,
+      "forgetting": 0.9447011144393207
+    },
+    "diff": {
+      "accuracy": -0.00010085728693898233,
+      "forgetting": 0.04372105652520197
+    }
+  },
+  "10.0": {
+    "full_bridges": {
+      "final_accuracy": 0.09823499747856783,
+      "forgetting": 0.7541895638599473
+    },
+    "adjacent_only": {
+      "final_accuracy": 0.14886398435036177,
+      "forgetting": 0.7319899509619227
+    },
+    "diff": {
+      "accuracy": 0.05062898687179394,
+      "forgetting": -0.022199612898024634
+    }
+  }
+}

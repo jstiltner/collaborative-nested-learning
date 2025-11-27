@@ -1,0 +1,319 @@
+{
+  "sgd": {
+    "optimizer": "sgd",
+    "config": {
+      "num_tasks": 5,
+      "batch_size": 64,
+      "steps_per_task": 500,
+      "eval_every": 100,
+      "input_dim": 784,
+      "hidden_dims": [
+        256,
+        128
+      ],
+      "output_dim": 10,
+      "learning_rate": 0.01,
+      "fast_freq": 1,
+      "medium_freq": 10,
+      "slow_freq": 50,
+      "hidden_dim": 32,
+      "bridge_frequency": 10,
+      "bridge_threshold": 0.3,
+      "seed": 42,
+      "results_dir": "./experiments/results"
+    },
+    "metrics": {
+      "average_accuracy": 0.1977811396873424,
+      "forgetting": 0.9957881549899006,
+      "forward_transfer": -0.1,
+      "backward_transfer": -0.9957881549899006,
+      "accuracy_matrix": [
+        [
+          0.9990543735224586,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.9882468168462292,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9978655282817502,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.9979859013091642,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.988905698436712
+        ]
+      ]
+    },
+    "training_time": 33.79846668243408,
+    "total_bridge_transfers": 0,
+    "bridge_stats": {}
+  },
+  "adam": {
+    "optimizer": "adam",
+    "config": {
+      "num_tasks": 5,
+      "batch_size": 64,
+      "steps_per_task": 500,
+      "eval_every": 100,
+      "input_dim": 784,
+      "hidden_dims": [
+        256,
+        128
+      ],
+      "output_dim": 10,
+      "learning_rate": 0.01,
+      "fast_freq": 1,
+      "medium_freq": 10,
+      "slow_freq": 50,
+      "hidden_dim": 32,
+      "bridge_frequency": 10,
+      "bridge_threshold": 0.3,
+      "seed": 42,
+      "results_dir": "./experiments/results"
+    },
+    "metrics": {
+      "average_accuracy": 0.1962682803832577,
+      "forgetting": 0.9942646995294323,
+      "forward_transfer": -0.1,
+      "backward_transfer": -0.9942646995294323,
+      "accuracy_matrix": [
+        [
+          0.9962174940898345,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.990205680705191,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9946638207043756,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.9959718026183283,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.9813414019162885
+        ]
+      ]
+    },
+    "training_time": 36.385759115219116,
+    "total_bridge_transfers": 0,
+    "bridge_stats": {}
+  },
+  "nested": {
+    "optimizer": "nested",
+    "config": {
+      "num_tasks": 5,
+      "batch_size": 64,
+      "steps_per_task": 500,
+      "eval_every": 100,
+      "input_dim": 784,
+      "hidden_dims": [
+        256,
+        128
+      ],
+      "output_dim": 10,
+      "learning_rate": 0.01,
+      "fast_freq": 1,
+      "medium_freq": 10,
+      "slow_freq": 50,
+      "hidden_dim": 32,
+      "bridge_frequency": 10,
+      "bridge_threshold": 0.3,
+      "seed": 42,
+      "results_dir": "./experiments/results"
+    },
+    "metrics": {
+      "average_accuracy": 0.19687342410489156,
+      "forgetting": 0.9947804866842535,
+      "forward_transfer": -0.1,
+      "backward_transfer": -0.9947804866842535,
+      "accuracy_matrix": [
+        [
+          0.9990543735224586,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.9872673849167483,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9973319103521878,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.9954682779456193,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.9843671205244579
+        ]
+      ]
+    },
+    "training_time": 35.71824383735657,
+    "total_bridge_transfers": 0,
+    "bridge_stats": {}
+  },
+  "collaborative": {
+    "optimizer": "collaborative",
+    "config": {
+      "num_tasks": 5,
+      "batch_size": 64,
+      "steps_per_task": 500,
+      "eval_every": 100,
+      "input_dim": 784,
+      "hidden_dims": [
+        256,
+        128
+      ],
+      "output_dim": 10,
+      "learning_rate": 0.01,
+      "fast_freq": 1,
+      "medium_freq": 10,
+      "slow_freq": 50,
+      "hidden_dim": 32,
+      "bridge_frequency": 10,
+      "bridge_threshold": 0.3,
+      "seed": 42,
+      "results_dir": "./experiments/results"
+    },
+    "metrics": {
+      "average_accuracy": 0.1983862834089763,
+      "forgetting": 0.9962634432864433,
+      "forward_transfer": -0.1,
+      "backward_transfer": -0.9962634432864433,
+      "accuracy_matrix": [
+        [
+          0.9990543735224586,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.9911851126346719,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.9973319103521878,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.9974823766364552,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.9919314170448815
+        ]
+      ]
+    },
+    "training_time": 37.62013578414917,
+    "total_bridge_transfers": 1500,
+    "bridge_stats": {
+      "fast_to_medium": {
+        "total_calls": 250,
+        "total_transfers": 250,
+        "transfer_rate": 1.0,
+        "mean_gate": 0.49992847442626953
+      },
+      "medium_to_slow": {
+        "total_calls": 250,
+        "total_transfers": 250,
+        "transfer_rate": 1.0,
+        "mean_gate": 0.5000410327911377
+      },
+      "fast_to_slow": {
+        "total_calls": 250,
+        "total_transfers": 250,
+        "transfer_rate": 1.0,
+        "mean_gate": 0.4998910024166107
+      },
+      "slow_to_fast": {
+        "total_calls": 250,
+        "total_transfers": 250,
+        "transfer_rate": 1.0,
+        "mean_gate": 0.49997721576690674
+      },
+      "slow_to_medium": {
+        "total_calls": 250,
+        "total_transfers": 250,
+        "transfer_rate": 1.0,
+        "mean_gate": 0.5001975445747375
+      },
+      "medium_to_fast": {
+        "total_calls": 250,
+        "total_transfers": 250,
+        "transfer_rate": 1.0,
+        "mean_gate": 0.4996655583381653
+      }
+    }
+  }
+}
