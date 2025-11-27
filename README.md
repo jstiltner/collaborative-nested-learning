@@ -1,221 +1,212 @@
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-
 # Collaborative Nested Learning
 
-> Multi-timescale optimization with explicit cross-timescale knowledge transfer
+> Multi-timescale optimization with bidirectional knowledge bridges for continual learning
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)](https://pytorch.org/)
 
-Production implementation of Google's [Nested Learning](https://abehrouz.github.io/files/NL.pdf) (NeurIPS 2025) with novel bidirectional knowledge bridges for continual learning.
+Implementation of Google's [Nested Learning](https://abehrouz.github.io/files/NL.pdf) (NeurIPS 2025) with a **novel extension**: bidirectional knowledge bridges that enable explicit cross-timescale learning.
 
-[**Demo**](https://colab.research.google.com/...) | [**Paper Notes**](docs/paper_notes.md) | [**Blog Post**](https://jasonstiltner.com/nested-learning)
+## The Problem: Catastrophic Forgetting
 
-## What This Does
+Deep learning models suffer from **catastrophic forgetting**: when learning new tasks, they lose performance on previously learned tasks. This is a fundamental limitation for deploying ML systems that need to continuously learn.
 
-Existing deep learning models suffer from **catastrophic forgetting**: when learning new tasks, they lose performance on old tasks. Nested Learning solves this by using multiple "memory banks" that update at different speeds (fast/medium/slow), mimicking how human brains learn at multiple timescales.
+## Our Solution: Knowledge Bridges
 
-**Our contribution:** We add explicit "knowledge bridges" that enable these memory banks to teach each other, resulting in 25%+ better retention compared to vanilla nested learning.
+We extend Google's Nested Learning approach with **bidirectional knowledge bridges** that enable memory banks at different timescales to teach each other:
+
+- **Fast → Slow**: When fast memory discovers consistent patterns, it shares them with slower banks
+- **Slow → Fast**: When slow memory has consolidated knowledge, it guides fast memory's exploration
+
+![Pareto Frontier](figures/pareto_frontier.png)
+
+**Key Result**: Bridges shift the accuracy-forgetting Pareto frontier, achieving **62% higher accuracy** at the same retention level compared to the baseline.
 
 ## Key Features
 
-- 🧠 **Multi-timescale optimization** - Fast, medium, and slow memory banks
-- 🌉 **Knowledge bridges** - Explicit bidirectional transfer between timescales (NOVEL)
-- 📊 **Production-ready** - Clean code, comprehensive tests, full documentation
-- 🚀 **Easy to use** - Drop-in replacement for PyTorch optimizers
-- 📈 **Benchmarked** - Rigorous comparisons on sequential learning tasks
-
-## Quick Start
-```bash
-pip install collaborative-nested-learning
-```
-```python
-import torch
-from collaborative_nested_learning import CollaborativeNestedOptimizer
-
-# Your model
-model = YourModel()
-
-# Replace SGD/Adam with Collaborative Nested Learning
-optimizer = CollaborativeNestedOptimizer(
-    model.parameters(),
-    lr=0.01,
-    fast_freq=1,      # Updates every step
-    medium_freq=10,   # Updates every 10 steps
-    slow_freq=100     # Updates every 100 steps
-)
-
-# Standard training loop
-for epoch in range(epochs):
-    loss = compute_loss(model, data)
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-    optimizer.meta_step(loss)  # Train the optimizers themselves
-```
-
-## Installation
-
-**From PyPI:**
-```bash
-pip install collaborative-nested-learning
-```
-
-**From source:**
-```bash
-git clone https://github.com/[username]/collaborative-nested-learning
-cd collaborative-nested-learning
-pip install -e .
-```
+- 🧠 **Multi-timescale optimization** - Fast, medium, and slow memory banks updating at different frequencies
+- 🌉 **Knowledge bridges** - Bidirectional transfer between timescales (our novel contribution)
+- ⚙️ **Tunable trade-off** - Single hyperparameter controls accuracy vs. retention balance
+- 📊 **Reproducible experiments** - All results with JSON outputs and visualization scripts
 
 ## Results
 
-Sequential Task Learning (A→B→C, test on A):
+### Split-MNIST Continual Learning (5 sequential tasks)
 
-| Method | Task A Retention | Forgetting | Adaptation Speed |
-|--------|-----------------|------------|------------------|
-| Standard SGD | 52% | 48% | 89 samples |
-| Vanilla Nested Learning | 71% | 29% | 53 samples |
-| **Collaborative NL (Ours)** | **87%** | **13%** | **34 samples** |
+| Method | Avg Accuracy | Forgetting | Retention |
+|--------|-------------|------------|-----------|
+| SGD Baseline | 19.4% | 99.1% | 0.9% |
+| CMS (reg=5.0) | 9.8% | 85.6% | 14.4% |
+| **CMS + Bridges (reg=5.0)** | **18.5%** | 94.0% | 6.0% |
+| CMS (reg=20.0) | 11.5% | 59.3% | 40.7% |
+| **CMS + Bridges (reg=20.0)** | **18.7%** | 61.9% | 38.1% |
 
-*Results on MNIST→Fashion-MNIST→CIFAR-10 continual classification.*
+**Key Insight**: Bridges consistently improve accuracy at every regularization level. The trade-off between accuracy and retention is tunable via the regularization strength.
+
+![Accuracy Improvement](figures/accuracy_improvement.png)
+
+### Understanding the Trade-off
+
+Different applications need different trade-offs:
+
+![Business Quadrants](figures/business_quadrants.png)
+
+- **High adaptation** (low reg): Best for rapidly changing domains (trends, new fraud patterns)
+- **High retention** (high reg): Best for safety-critical systems (medical, autonomous)
+- **Balanced**: Best for most production systems
+
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/jstiltner/collaborative-nested-learning
+cd collaborative-nested-learning
+
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Install in development mode
+pip install -e .
+```
+
+## Quick Start
+
+```python
+import torch
+from src.optimizers.collaborative_cms import CollaborativeCMSOptimizer
+
+# Your model
+model = torch.nn.Sequential(
+    torch.nn.Linear(784, 256),
+    torch.nn.ReLU(),
+    torch.nn.Linear(256, 10)
+)
+
+# Create optimizer with knowledge bridges
+optimizer = CollaborativeCMSOptimizer(
+    model.parameters(),
+    lr=0.01,
+    hidden_dim=64,
+    regularization_strength=5.0,  # Tune this for your use case
+    enable_bridges=True
+)
+
+# Training loop
+for batch in dataloader:
+    loss = criterion(model(batch.x), batch.y)
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+```
+
+## Running Experiments
+
+### Reproduce Our Results
+
+```bash
+# Run the main ablation study
+python benchmarks/run_ablation.py
+
+# Run bridge ablation (with vs without bridges)
+python benchmarks/run_bridge_ablation.py
+
+# Run regularization sweep
+python benchmarks/run_reg_sweep.py
+
+# Generate visualizations
+python experiments/visualize_contribution.py
+```
+
+### View Results
+
+Results are saved to `experiments/results/` as JSON files. Run the analysis script:
+
+```bash
+python experiments/results_analysis.py
+```
 
 ## Architecture
+
 ```
 ┌─────────────────────────────────────────────────┐
 │              Input Gradient                      │
 └──────────────┬──────────────────────────────────┘
                │
        ┌───────▼──────┐
-       │ Fast Memory  │ ◄─┐ Updates every step
-       │  (size: 5)   │   │ Learns immediate patterns
-       └───────┬──────┘   │
-               │          │
-        Bridge │          │ Knowledge
-               │          │ Transfer
-       ┌───────▼──────┐   │
-       │Medium Memory │ ◄─┤ Updates every 10 steps
-       │  (size: 20)  │   │ Learns short-term patterns
-       └───────┬──────┘   │
-               │          │
-        Bridge │          │
-               │          │
-       ┌───────▼──────┐   │
-       │ Slow Memory  │ ◄─┘ Updates every 100 steps
-       │  (size: 100) │     Learns core principles
+       │ Fast Memory  │ ◄──┐ Updates every step
+       │              │    │
+       └───────┬──────┘    │
+               │           │ Bidirectional
+        Bridge ↕           │ Knowledge
+               │           │ Transfer
+       ┌───────▼──────┐    │
+       │Medium Memory │ ◄──┤ Updates every 10 steps
+       │              │    │
+       └───────┬──────┘    │
+               │           │
+        Bridge ↕           │
+               │           │
+       ┌───────▼──────┐    │
+       │ Slow Memory  │ ◄──┘ Updates every 50 steps
+       │              │
        └───────┬──────┘
                │
                ▼
         Parameter Update
 ```
 
-**Key innovation:** Bridges enable bidirectional knowledge flow. Fast memory can teach medium when it discovers consistent patterns. Slow memory can guide fast when core principles are violated.
+**Novel contribution**: The bridges enable bidirectional knowledge flow with learned gating that determines when and how much to transfer.
 
-## Components
+## Project Structure
 
-### 1. Deep Momentum Optimizer
-Neural network that learns how to combine gradient history:
-```python
-from collaborative_nested_learning import DeepMomentumOptimizer
-
-optimizer = DeepMomentumOptimizer(
-    model.parameters(),
-    lr=0.01,
-    memory_size=10,  # Remember last 10 gradients
-    hidden_dim=32
-)
 ```
-
-### 2. Nested Optimizer
-Three optimizers at different timescales:
-```python
-from collaborative_nested_learning import NestedOptimizer
-
-optimizer = NestedOptimizer(
-    model.parameters(),
-    fast_freq=1,
-    medium_freq=10,
-    slow_freq=100
-)
-```
-
-### 3. Knowledge Bridges (Novel)
-Explicit cross-timescale communication:
-```python
-from collaborative_nested_learning import CollaborativeNestedOptimizer
-
-optimizer = CollaborativeNestedOptimizer(
-    model.parameters(),
-    share_threshold=0.7  # Confidence threshold for sharing
-)
-```
-
-## Benchmarks
-
-Run the benchmark suite:
-```bash
-python benchmarks/sequential_tasks.py
-```
-
-Compare against baselines:
-```bash
-python experiments/compare_optimizers.py --methods sgd nested collaborative
-```
-
-Visualize results:
-```bash
-python demos/visualize_bridges.py
-```
-
-## Documentation
-
-- [Architecture Overview](docs/ARCHITECTURE.md)
-- [API Reference](docs/API.md)
-- [Implementation Decisions](docs/implementation_decisions.md)
-- [Paper Summary](docs/paper_notes.md)
-- [Blog Post](https://jasonstiltner.com/nested-learning)
-
-## Examples
-
-**Continual Classification:**
-```python
-from collaborative_nested_learning.benchmarks import ContinualClassification
-
-benchmark = ContinualClassification(
-    tasks=['mnist', 'fashion_mnist', 'cifar10'],
-    optimizer_class=CollaborativeNestedOptimizer
-)
-results = benchmark.run()
-```
-
-**Sequential Task Learning:**
-```python
-from collaborative_nested_learning.benchmarks import SequentialTasks
-
-benchmark = SequentialTasks(
-    num_tasks=3,
-    samples_per_task=1000
-)
-results = benchmark.compare_optimizers(['sgd', 'nested', 'collaborative'])
+collaborative-nested-learning/
+├── src/
+│   ├── optimizers/          # Optimizer implementations
+│   │   ├── deep_momentum.py # Learned momentum optimizer
+│   │   ├── nested_optimizer.py  # Multi-timescale optimizer
+│   │   └── collaborative_cms.py # Full implementation with bridges
+│   ├── bridges/             # Knowledge bridge mechanisms
+│   │   └── knowledge_bridges.py
+│   └── memory/              # Memory bank implementations
+│       ├── memory_bank.py
+│       └── continuum.py     # Continuum Memory System
+├── benchmarks/              # Benchmark scripts
+│   ├── split_mnist.py       # Split-MNIST dataset
+│   ├── metrics.py           # Evaluation metrics
+│   └── run_*.py             # Various ablation studies
+├── experiments/             # Analysis and visualization
+│   ├── results/             # JSON result files
+│   ├── results_analysis.py  # Analysis script
+│   └── visualize_contribution.py
+├── figures/                 # Generated visualizations
+├── tests/                   # Unit tests
+└── docs/                    # Documentation
 ```
 
 ## Citation
 
 If you use this work, please cite:
+
 ```bibtex
 @software{stiltner2025collaborative,
   author = {Stiltner, Jason},
-  title = {Collaborative Nested Learning: Cross-Timescale Knowledge Transfer},
+  title = {Collaborative Nested Learning: Bidirectional Knowledge Bridges for Continual Learning},
   year = {2025},
-  url = {https://github.com/[username]/collaborative-nested-learning}
+  url = {https://github.com/jstiltner/collaborative-nested-learning}
 }
 ```
 
 And the original Nested Learning paper:
+
 ```bibtex
 @inproceedings{behrouz2025nested,
-  title={Nested Learning: The Illusion of Deep Learning Architectures},
+  title={Nested Learning},
   author={Behrouz, Ali and Razaviyayn, Meisam and Zhong, Peilin and Mirrokni, Vahab},
   booktitle={NeurIPS},
   year={2025}
@@ -224,67 +215,48 @@ And the original Nested Learning paper:
 
 ## Contributing
 
-Contributions welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md).
+Contributions welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 Areas for contribution:
-- Additional benchmarks (RL, language modeling, etc.)
-- More sophisticated bridge architectures
-- Adaptive frequency learning
-- Integration with existing frameworks (HuggingFace, Lightning, etc.)
+- Additional benchmarks (CIFAR-100, language modeling)
+- Adaptive bridge topology
+- Integration with PyTorch Lightning / HuggingFace
+- Performance optimizations
 
 ## Development
+
 ```bash
 # Install dev dependencies
-pip install -e ".[dev]"
+pip install -r requirements.txt
 
 # Run tests
 pytest tests/
 
 # Format code
-black src/ tests/
-isort src/ tests/
-
-# Type checking
-mypy src/
+black src/ tests/ benchmarks/
+isort src/ tests/ benchmarks/
 ```
 
-## License & Commercial Use
+## License
 
-This project is **open source** under Apache 2.0 and free for:
-- Research and academic use
-- Personal projects
-- Companies with <$10M annual revenue
+This project is open source under the [Apache 2.0 License](LICENSE).
 
-**Enterprise customers** (>$10M revenue) using this in production should contact us for:
-- Enterprise licensing and support
-- Implementation services
-- Managed platform options
-- Training and consulting
-
-See [LICENSING.md](LICENSING.md) for details or contact jason@stiltner.com
-
-Core framework remains free and open source forever.
+See [LICENSING.md](LICENSING.md) for commercial use details.
 
 ## Related Work
 
 - [Nested Learning (NeurIPS 2025)](https://abehrouz.github.io/files/NL.pdf) - Original paper
 - [Titans](https://arxiv.org/abs/2501.00663) - Precursor architecture
-- [Fast Weight Programmers](https://arxiv.org/abs/2106.06295) - Related paradigm
-- [Test-Time Training](https://arxiv.org/abs/2407.04620) - Alternative approach
+- [Elastic Weight Consolidation](https://arxiv.org/abs/1612.00796) - Alternative approach
 
 ## Author
 
 **Jason Stiltner**
 - Website: [jasonstiltner.com](https://jasonstiltner.com)
-- Twitter: [@jstiltner](https://twitter.com/jstiltner)
 - LinkedIn: [jason-stiltner](https://linkedin.com/in/jasonlstiltner)
 
-Production ML engineer with experience deploying systems across 190 hospitals. Interested in continual learning, self-improving systems, and production ML infrastructure.
+ML Engineer with experience deploying production systems across 190 hospitals. Interested in continual learning and self-improving systems.
 
-## Acknowledgments
+---
 
-Built on insights from Google Research's Nested Learning paper. Thanks to the PyTorch team for an excellent framework. Inspired by multi-level architectures in game design and organizational learning systems.
-
-**Status:** ✅ Production-ready | 🚧 Active development | 📊 Benchmarked | 📖 Documented
-
-**Star this repo** if you find it useful!
+**Status**: 🚧 Active Development | 📊 Benchmarked | 📖 Documented
