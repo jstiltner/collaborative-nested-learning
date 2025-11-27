@@ -20,7 +20,7 @@ explicit cross-timescale learning (see src/bridges/knowledge_bridges.py).
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Dict, Iterable, Optional, Tuple
 
 import torch
 import torch.nn as nn
@@ -536,7 +536,7 @@ def _test_continuum_memory_system():
 
     # Get stats
     stats = cms.get_stats()
-    print(f"\n  Final stats:")
+    print("\n  Final stats:")
     print(f"    Step count: {stats['step_count']}")
     print(f"    Fast updates: {stats['fast']['total_updates']}")
     print(f"    Medium updates: {stats['medium']['total_updates']}")

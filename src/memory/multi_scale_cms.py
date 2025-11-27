@@ -300,13 +300,13 @@ def _test_multi_scale_cms():
                 p.grad = torch.randn_like(p)
 
             # Update CMS
-            update_result = cms.update(params)
+            cms.update(params)
 
             # Accumulate importance
             cms.accumulate_importance(params)
 
             # Compute regularization
-            reg_loss = cms.compute_regularization_loss(params)
+            cms.compute_regularization_loss(params)
 
         # Get stats
         stats = cms.get_stats()

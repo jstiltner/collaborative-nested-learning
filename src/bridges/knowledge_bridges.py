@@ -585,7 +585,7 @@ def _test_collaborative_optimizer():
 
     # Get bridge statistics
     stats = optimizer.get_bridge_stats()
-    print(f"\n  Bridge statistics:")
+    print("\n  Bridge statistics:")
     for bridge_name, bridge_stats in stats.items():
         print(
             f"    {bridge_name}: transfer_rate={bridge_stats['transfer_rate']:.2f}, "

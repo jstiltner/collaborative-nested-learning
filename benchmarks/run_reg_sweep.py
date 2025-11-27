@@ -5,9 +5,9 @@ Tests different regularization strengths to find optimal forgetting prevention.
 
 import json
 import os
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 import torch

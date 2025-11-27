@@ -440,7 +440,7 @@ def _test_multi_scale():
             optimizer.zero_grad()
             loss = F.cross_entropy(model(x), y)
             loss.backward()
-            result = optimizer.step()
+            optimizer.step()
 
         final_loss = F.cross_entropy(model(x), y).item()
 

@@ -247,10 +247,9 @@ class NestedOptimizer:
                 'step_count': int,
             }
         """
-        loss = None
         if closure is not None:
             with torch.enable_grad():
-                loss = closure()
+                closure()
 
         self._step_count += 1
 
@@ -499,7 +498,7 @@ def _test_nested_optimizer():
 
     # Check memory states
     states = optimizer.get_memory_states()
-    print(f"\n  Memory state shapes:")
+    print("\n  Memory state shapes:")
     for name, state in states.items():
         print(f"    {name}: {state.shape}")
 

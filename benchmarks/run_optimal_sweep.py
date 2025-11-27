@@ -7,9 +7,9 @@ This script:
 
 import json
 import os
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 import torch
@@ -314,7 +314,7 @@ def run_optimal_sweep(config: Optional[OptimalSweepConfig] = None) -> Dict[str, 
     acc_diff = with_bridges["average_accuracy"] - without_bridges["average_accuracy"]
     forget_diff = without_bridges["forgetting"] - with_bridges["forgetting"]
 
-    print(f"\nBridge Contribution:")
+    print("\nBridge Contribution:")
     print(
         f"  Accuracy: {acc_diff:+.4f} ({acc_diff/without_bridges['average_accuracy']*100:+.2f}%)"
     )

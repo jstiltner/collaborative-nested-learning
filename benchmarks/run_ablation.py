@@ -315,7 +315,7 @@ def run_experiment(
         "bridge_stats": bridge_stats,
     }
 
-    print(f"\n  Final Results:")
+    print("\n  Final Results:")
     print(f"    Average Accuracy: {metrics.average_accuracy:.4f}")
     print(f"    Forgetting: {metrics.forgetting:.4f}")
     print(f"    Forward Transfer: {metrics.forward_transfer:.4f}")
@@ -393,18 +393,18 @@ def run_ablation(config: Optional[ExperimentConfig] = None) -> Dict[str, Any]:
     nested_acc = all_results["nested"]["metrics"]["average_accuracy"]
     collab_acc = all_results["collaborative"]["metrics"]["average_accuracy"]
 
-    print(f"\nNested Optimizer:")
+    print("\nNested Optimizer:")
     print(f"  Forgetting: {nested_forgetting:.4f}")
     print(f"  Accuracy: {nested_acc:.4f}")
 
-    print(f"\nCollaborative Nested Optimizer (ours):")
+    print("\nCollaborative Nested Optimizer (ours):")
     print(f"  Forgetting: {collab_forgetting:.4f}")
     print(f"  Accuracy: {collab_acc:.4f}")
 
     forgetting_improvement = nested_forgetting - collab_forgetting
     acc_improvement = collab_acc - nested_acc
 
-    print(f"\nImprovement:")
+    print("\nImprovement:")
     print(
         f"  Forgetting reduction: {forgetting_improvement:.4f} ({forgetting_improvement/nested_forgetting*100:.1f}%)"
     )

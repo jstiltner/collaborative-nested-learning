@@ -16,12 +16,12 @@ Our extension: Bidirectional bridges enable explicit cross-timescale learning.
 
 from __future__ import annotations
 
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, Optional
 
 import torch
 import torch.nn as nn
 
-from src.bridges.knowledge_bridges import CollaborativeNestedOptimizer, KnowledgeBridge
+from src.bridges.knowledge_bridges import CollaborativeNestedOptimizer
 from src.memory.continuum import CMSConfig, ContinuumMemorySystem
 
 
@@ -319,7 +319,7 @@ def _test_collaborative_cms_optimizer():
             total_loss.backward()
 
             # Step
-            result = optimizer.step()
+            optimizer.step()
 
             if step % 20 == 0:
                 drift = optimizer.get_memory_drift()

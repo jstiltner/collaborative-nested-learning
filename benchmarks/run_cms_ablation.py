@@ -324,7 +324,7 @@ def run_cms_ablation(config: Optional[CMSExperimentConfig] = None) -> Dict[str, 
             (sgd_forget - cms_forget) / sgd_forget * 100 if sgd_forget > 0 else 0
         )
 
-        print(f"\nCMS vs SGD:")
+        print("\nCMS vs SGD:")
         print(f"  Accuracy improvement: {improvement:+.2f}%")
         print(f"  Forgetting reduction: {forget_reduction:+.2f}%")
 

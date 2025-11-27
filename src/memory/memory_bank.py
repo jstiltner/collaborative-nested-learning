@@ -13,8 +13,8 @@ they update less frequently, preventing catastrophic forgetting.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Any, Dict, Iterable, List, Optional, Tuple
+from dataclasses import dataclass
+from typing import Any, Dict, Iterable, Optional
 
 import torch
 import torch.nn as nn

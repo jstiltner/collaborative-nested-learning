@@ -21,7 +21,7 @@ The memory network is trained via meta-learning to minimize:
 from __future__ import annotations
 
 from collections import deque
-from typing import Any, Callable, Dict, Iterable, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, Optional
 
 import torch
 import torch.nn as nn

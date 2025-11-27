@@ -132,7 +132,7 @@ class TestNestedOptimizerStep:
             loss.backward()
             result = opt.step()
 
-            assert result["fast_stepped"] == True, f"Fast should step at step {i+1}"
+            assert result["fast_stepped"], f"Fast should step at step {i+1}"
 
     def test_medium_steps_at_frequency(self, model_and_optimizer):
         """Test that medium optimizer steps at correct frequency."""
@@ -233,7 +233,7 @@ class TestNestedOptimizerGradientAccumulation:
         loss.backward()
         result = opt.step()
 
-        assert result["medium_stepped"] == True
+        assert result["medium_stepped"]
         assert opt._medium_accum_count == 0
 
 

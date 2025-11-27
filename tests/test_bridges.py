@@ -222,7 +222,7 @@ class TestCollaborativeNestedOptimizer:
 
         assert opt.bridge_threshold == 0.5
         assert opt.bridge_frequency == 10
-        assert opt.enable_reverse_bridges == True
+        assert opt.enable_reverse_bridges
 
     def test_custom_parameters(self, simple_model):
         """Test initialization with custom parameters."""
@@ -235,7 +235,7 @@ class TestCollaborativeNestedOptimizer:
 
         assert opt.bridge_threshold == 0.7
         assert opt.bridge_frequency == 5
-        assert opt.enable_reverse_bridges == False
+        assert not opt.enable_reverse_bridges
 
     def test_bridges_created(self, simple_model):
         """Test that all bridges are created."""
@@ -469,7 +469,7 @@ class TestKnowledgeFlow:
         opt.step()
 
         # Get initial fast optimizer state
-        initial_state = opt.fast.get_knowledge_state().clone()
+        opt.fast.get_knowledge_state().clone()
 
         # Take more steps with bridge transfers
         for _ in range(10):
@@ -480,7 +480,7 @@ class TestKnowledgeFlow:
             opt.step()
 
         # State should have changed due to knowledge injection
-        final_state = opt.fast.get_knowledge_state()
+        opt.fast.get_knowledge_state()
 
         # Note: This test may be flaky depending on initialization
         # The key is that the mechanism exists and runs without error
@@ -562,7 +562,7 @@ class TestAdjacentOnlyBridges:
         diag = opt.get_diagnostics()
 
         assert "adjacent_only" in diag
-        assert diag["adjacent_only"] == True
+        assert diag["adjacent_only"]
 
     def test_adjacent_only_step_works(self, simple_model):
         """Test that step works correctly with adjacent_only=True."""

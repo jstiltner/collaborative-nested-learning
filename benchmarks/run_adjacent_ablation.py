@@ -14,12 +14,11 @@ propagation from fast directly to slow memory.
 import json
 import os
 from datetime import datetime
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import DataLoader, TensorDataset
 
 from benchmarks.split_mnist import SplitMNIST
 from src.memory.continuum import CMSConfig

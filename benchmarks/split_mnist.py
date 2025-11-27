@@ -10,9 +10,8 @@ Splits MNIST into 5 sequential tasks:
 This is a standard benchmark for evaluating catastrophic forgetting.
 """
 
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
-import torch
 from torch.utils.data import DataLoader, Dataset, Subset
 from torchvision import datasets, transforms
 

@@ -12,9 +12,9 @@ This isolates the bridge contribution from the CMS contribution.
 
 import json
 import os
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
 import torch
@@ -228,11 +228,11 @@ def run_bridge_ablation(
         print("=" * 50)
 
         # CMS only (no bridges)
-        print(f"  Running CMS only...")
+        print("  Running CMS only...")
         cms_only = run_experiment(config, strength, enable_bridges=False)
 
         # CMS + Bridges
-        print(f"  Running CMS + Bridges...")
+        print("  Running CMS + Bridges...")
         cms_bridges = run_experiment(config, strength, enable_bridges=True)
 
         results[str(strength)] = {

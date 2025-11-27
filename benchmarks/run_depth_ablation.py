@@ -12,7 +12,6 @@ Configurations:
 All configurations span similar total frequency range (~100-1000x).
 """
 
-import sys
 import time
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
@@ -277,9 +276,7 @@ def run_depth_experiment(
                         f"range=[{bridge_activity['min_gate']:.3f}, {bridge_activity['max_gate']:.3f}]"
                     )
                 elif use_bridges:
-                    print(
-                        f"    Bridge activity: 0 attempts (bridge_frequency too high)"
-                    )
+                    print("    Bridge activity: 0 attempts (bridge_frequency too high)")
 
         # Consolidate after task
         cms.consolidate(params)
@@ -324,7 +321,7 @@ def run_depth_experiment(
             if total_bridge_activity["gate_values"]
             else 0.0
         )
-        print(f"\n  Bridge Summary:")
+        print("\n  Bridge Summary:")
         print(f"    Total attempts: {total_attempts}")
         print(f"    Total transfers: {total_transfers}")
         print(f"    Transfer rate: {total_transfers/max(1,total_attempts):.1%}")
