@@ -1,0 +1,482 @@
+{
+  "config": {
+    "reg_strengths": [
+      0.1,
+      1.0,
+      5.0,
+      10.0,
+      20.0
+    ],
+    "num_epochs": 3,
+    "num_tasks": 5,
+    "seed": 42
+  },
+  "timestamp": "20260901_114652",
+  "results": {
+    "0.1": {
+      "cms_only": {
+        "reg_strength": 0.1,
+        "enable_bridges": false,
+        "accuracy_matrix": [
+          [
+            0.998,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.972,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.994,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.99,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.979
+          ]
+        ],
+        "average_accuracy": 0.1958,
+        "forgetting": 0.9884999999999999,
+        "backward_transfer": -0.9884999999999999,
+        "bridge_transfers": 0
+      },
+      "cms_bridges": {
+        "reg_strength": 0.1,
+        "enable_bridges": true,
+        "accuracy_matrix": [
+          [
+            0.998,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.972,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.991,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.989,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.976
+          ]
+        ],
+        "average_accuracy": 0.19519999999999998,
+        "forgetting": 0.9874999999999999,
+        "backward_transfer": -0.9874999999999999,
+        "bridge_transfers": 2526
+      }
+    },
+    "1.0": {
+      "cms_only": {
+        "reg_strength": 1.0,
+        "enable_bridges": false,
+        "accuracy_matrix": [
+          [
+            0.998,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.961,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.971,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.989,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.961
+          ]
+        ],
+        "average_accuracy": 0.19219999999999998,
+        "forgetting": 0.97975,
+        "backward_transfer": -0.97975,
+        "bridge_transfers": 0
+      },
+      "cms_bridges": {
+        "reg_strength": 1.0,
+        "enable_bridges": true,
+        "accuracy_matrix": [
+          [
+            0.997,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.963,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.968,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.989,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.956
+          ]
+        ],
+        "average_accuracy": 0.19119999999999998,
+        "forgetting": 0.97925,
+        "backward_transfer": -0.97925,
+        "bridge_transfers": 2526
+      }
+    },
+    "5.0": {
+      "cms_only": {
+        "reg_strength": 5.0,
+        "enable_bridges": false,
+        "accuracy_matrix": [
+          [
+            0.996,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.879,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.894,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.977,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.932
+          ]
+        ],
+        "average_accuracy": 0.1864,
+        "forgetting": 0.9365,
+        "backward_transfer": -0.9365,
+        "bridge_transfers": 0
+      },
+      "cms_bridges": {
+        "reg_strength": 5.0,
+        "enable_bridges": true,
+        "accuracy_matrix": [
+          [
+            0.997,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.752,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.897,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.983,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.774
+          ]
+        ],
+        "average_accuracy": 0.1548,
+        "forgetting": 0.90725,
+        "backward_transfer": -0.90725,
+        "bridge_transfers": 2526
+      }
+    },
+    "10.0": {
+      "cms_only": {
+        "reg_strength": 10.0,
+        "enable_bridges": false,
+        "accuracy_matrix": [
+          [
+            0.967,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.025,
+            0.791,
+            0.0,
+            0.001,
+            0.0
+          ],
+          [
+            0.001,
+            0.0,
+            0.613,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.949,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.715
+          ]
+        ],
+        "average_accuracy": 0.143,
+        "forgetting": 0.83,
+        "backward_transfer": -0.83,
+        "bridge_transfers": 0
+      },
+      "cms_bridges": {
+        "reg_strength": 10.0,
+        "enable_bridges": true,
+        "accuracy_matrix": [
+          [
+            0.944,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.018,
+            0.655,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.001,
+            0.0,
+            0.579,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            0.947,
+            0.0
+          ],
+          [
+            0.001,
+            0.0,
+            0.0,
+            0.0,
+            0.676
+          ]
+        ],
+        "average_accuracy": 0.13540000000000002,
+        "forgetting": 0.7809999999999999,
+        "backward_transfer": -0.7809999999999999,
+        "bridge_transfers": 2526
+      }
+    },
+    "20.0": {
+      "cms_only": {
+        "reg_strength": 20.0,
+        "enable_bridges": false,
+        "accuracy_matrix": [
+          [
+            0.76,
+            0.0,
+            0.001,
+            0.001,
+            0.002
+          ],
+          [
+            0.281,
+            0.452,
+            0.0,
+            0.007,
+            0.01
+          ],
+          [
+            0.189,
+            0.014,
+            0.396,
+            0.007,
+            0.006
+          ],
+          [
+            0.008,
+            0.001,
+            0.0,
+            0.627,
+            0.0
+          ],
+          [
+            0.181,
+            0.001,
+            0.0,
+            0.015,
+            0.667
+          ]
+        ],
+        "average_accuracy": 0.1728,
+        "forgetting": 0.5095000000000001,
+        "backward_transfer": -0.5095000000000001,
+        "bridge_transfers": 0
+      },
+      "cms_bridges": {
+        "reg_strength": 20.0,
+        "enable_bridges": true,
+        "accuracy_matrix": [
+          [
+            0.621,
+            0.0,
+            0.001,
+            0.001,
+            0.003
+          ],
+          [
+            0.283,
+            0.503,
+            0.0,
+            0.008,
+            0.015
+          ],
+          [
+            0.186,
+            0.011,
+            0.39,
+            0.008,
+            0.008
+          ],
+          [
+            0.012,
+            0.001,
+            0.0,
+            0.671,
+            0.002
+          ],
+          [
+            0.126,
+            0.0,
+            0.0,
+            0.016,
+            0.592
+          ]
+        ],
+        "average_accuracy": 0.14679999999999999,
+        "forgetting": 0.51075,
+        "backward_transfer": -0.51075,
+        "bridge_transfers": 2526
+      }
+    }
+  },
+  "summary": {
+    "bridge_helps_accuracy": 0,
+    "bridge_helps_forgetting": 4,
+    "total_settings": 5
+  }
+}

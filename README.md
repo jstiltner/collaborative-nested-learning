@@ -7,6 +7,14 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-red.svg)](https://pytorch.org/)
 [![Tests](https://github.com/jstiltner/collaborative-nested-learning/actions/workflows/tests.yml/badge.svg)](https://github.com/jstiltner/collaborative-nested-learning/actions/workflows/tests.yml)
 
+**CI-reproduced weekly, real MNIST** — [![Bridge contribution](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fjstiltner%2Fcollaborative-nested-learning%2Fmain%2Fci_results%2Fbadge-regularization.json)](.github/workflows/ci-reproduce.yml)
+— see [`ci_results/latest.json`](ci_results/latest.json) and
+[`benchmarks/run_bridge_ablation.py`](benchmarks/run_bridge_ablation.py). Every push also runs a
+fast (~2 min) smoke test on a small committed fixture — that one only checks the code path
+still runs, it does *not* feed the badge; see `CHANGELOG.md` for why (this experiment's bridge
+effect turned out to need close to full MNIST scale to show the right direction at all).
+Full-scale reproduction: [open the Colab notebook](notebooks/reproduce_bridge_ablation.ipynb).
+
 Implementation of Google's [Nested Learning](https://abehrouz.github.io/files/NL.pdf) (NeurIPS 2025) with a **novel extension**: bidirectional knowledge bridges that enable explicit cross-timescale learning.
 
 ## The Problem: Catastrophic Forgetting

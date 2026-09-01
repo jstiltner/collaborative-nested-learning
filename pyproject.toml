@@ -24,6 +24,16 @@ line_length = 88
 known_first_party = ["src"]
 skip = [".venv", "data"]
 
+[tool.ruff]
+# setup.py declares python_requires=">=3.9" and the test matrix runs 3.9, so
+# ruff must not suggest rewrites that are only valid on 3.10+ (e.g. UP045).
+target-version = "py39"
+
+[tool.ruff.lint]
+# Pinned explicitly rather than inherited: ruff's default rule set expanded
+# between 0.14 and 0.16, which turned 1 error into 288 without a code change.
+select = ["E4", "E7", "E9", "F"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]

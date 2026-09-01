@@ -10,10 +10,17 @@ Splits MNIST into 5 sequential tasks:
 This is a standard benchmark for evaluating catastrophic forgetting.
 """
 
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
-from torch.utils.data import DataLoader, Dataset, Subset
+import torch
+from torch.utils.data import DataLoader, Dataset, Subset, TensorDataset
 from torchvision import datasets, transforms
+
+
+def _normalize(images_uint8: torch.Tensor) -> torch.Tensor:
+    """Apply the same ToTensor+Normalize pipeline SplitMNIST uses, to raw uint8 pixels."""
+    images = images_uint8.float().div(255.0).unsqueeze(1)  # [N, 1, 28, 28]
+    return (images - 0.1307) / 0.3081
 
 
 class SplitMNIST:
@@ -42,10 +49,19 @@ class SplitMNIST:
         num_tasks: int = 5,
         batch_size: int = 64,
         download: bool = True,
+        fixture_path: Optional[str] = None,
     ):
+        """
+        Args:
+            fixture_path: if set, loads a small pre-generated subset from this file
+                (see generate_ci_fixture.py) instead of the full MNIST via torchvision —
+                for hermetic, fast CI runs with no live download. root/download are
+                ignored when this is set.
+        """
         self.root = root
         self.num_tasks = num_tasks
         self.batch_size = batch_size
+        self.fixture_path = fixture_path
 
         # Standard MNIST transforms
         self.transform = transforms.Compose(
@@ -55,20 +71,29 @@ class SplitMNIST:
             ]
         )
 
-        # Load full MNIST
-        self.train_dataset = datasets.MNIST(
-            root=root,
-            train=True,
-            download=download,
-            transform=self.transform,
-        )
+        if fixture_path is not None:
+            fixture = torch.load(fixture_path, weights_only=True)
+            self.train_dataset = TensorDataset(
+                _normalize(fixture["train_images"]), fixture["train_labels"]
+            )
+            self.test_dataset = TensorDataset(
+                _normalize(fixture["test_images"]), fixture["test_labels"]
+            )
+        else:
+            # Load full MNIST
+            self.train_dataset = datasets.MNIST(
+                root=root,
+                train=True,
+                download=download,
+                transform=self.transform,
+            )
 
-        self.test_dataset = datasets.MNIST(
-            root=root,
-            train=False,
-            download=download,
-            transform=self.transform,
-        )
+            self.test_dataset = datasets.MNIST(
+                root=root,
+                train=False,
+                download=download,
+                transform=self.transform,
+            )
 
         # Compute classes per task
         self.classes_per_task = 10 // num_tasks
