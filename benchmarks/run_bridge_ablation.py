@@ -13,7 +13,7 @@ This isolates the bridge contribution from the CMS contribution.
 import argparse
 import json
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional, Tuple
 
