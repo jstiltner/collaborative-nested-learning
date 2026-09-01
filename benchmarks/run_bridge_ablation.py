@@ -10,10 +10,11 @@ Comparisons:
 This isolates the bridge contribution from the CMS contribution.
 """
 
+import argparse
 import json
 import os
-from dataclasses import dataclass
-from datetime import datetime
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from typing import Any, Dict, Optional, Tuple
 
 import numpy as np
@@ -25,6 +26,8 @@ from benchmarks.metrics import ContinualMetrics
 from benchmarks.split_mnist import SplitMNIST
 from src.memory.continuum import CMSConfig
 from src.optimizers.collaborative_cms import CollaborativeCMSOptimizer
+
+CI_FIXTURE_PATH = "benchmarks/fixtures/mnist_ci_fixture.pt"
 
 
 @dataclass
@@ -51,6 +54,10 @@ class BridgeAblationConfig:
     num_tasks: int = 5
     seed: int = 42
     device: str = "cuda" if torch.cuda.is_available() else "cpu"
+
+    # CI: load a small committed fixture instead of downloading full MNIST (see
+    # generate_ci_fixture.py). None => full torchvision MNIST download.
+    fixture_path: Optional[str] = None
 
 
 class SimpleMLP(nn.Module):
@@ -161,6 +168,7 @@ def run_experiment(
         root="./data",
         num_tasks=config.num_tasks,
         batch_size=config.batch_size,
+        fixture_path=config.fixture_path,
     )
 
     accuracy_matrix = []
@@ -328,10 +336,128 @@ def run_bridge_ablation(
     return all_results
 
 
-if __name__ == "__main__":
-    config = BridgeAblationConfig(
-        num_epochs=3,
-        num_tasks=5,
-        reg_strengths=(0.1, 1.0, 5.0, 10.0),
+def _badge_color(bridge_helps_accuracy: int, total: int) -> str:
+    if bridge_helps_accuracy == total:
+        return "brightgreen"
+    if bridge_helps_accuracy >= total / 2:
+        return "yellow"
+    return "orange"
+
+
+def write_ci_results(all_results: Dict[str, Any], scale: str) -> None:
+    """Write ci_results/latest.json plus a shields.io endpoint badge.
+
+    Read by scripts/fetch-ci-results.ts in the jasonstiltner2026 site repo and by
+    shields.io's dynamic /endpoint badge (raw GitHub URL to this JSON file).
+    """
+    ci_results_dir = "ci_results"
+    os.makedirs(ci_results_dir, exist_ok=True)
+
+    commit_sha = os.environ.get("GITHUB_SHA", "local")
+    server = os.environ.get("GITHUB_SERVER_URL")
+    repo = os.environ.get("GITHUB_REPOSITORY")
+    run_id = os.environ.get("GITHUB_RUN_ID")
+    workflow_run_url = (
+        f"{server}/{repo}/actions/runs/{run_id}" if server and repo and run_id else None
     )
-    run_bridge_ablation(config)
+
+    # Headline metric: bridge contribution (accuracy diff) at the strength closest to 5.0,
+    # matching the site's flagship "+89%" row.
+    strengths = all_results["config"]["reg_strengths"]
+    headline_strength = min(strengths, key=lambda s: abs(s - 5.0))
+    headline = all_results["results"][str(headline_strength)]
+    cms_acc = headline["cms_only"]["average_accuracy"]
+    bridges_acc = headline["cms_bridges"]["average_accuracy"]
+    improvement_pct = (bridges_acc - cms_acc) / cms_acc * 100 if cms_acc else 0.0
+
+    latest = {
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "commit_sha": commit_sha,
+        "workflow_run_url": workflow_run_url,
+        "scale": scale,
+        "source": "benchmarks/run_bridge_ablation.py",
+        "reg_strengths": strengths,
+        "headline_strength": headline_strength,
+        "headline_improvement_pct": improvement_pct,
+        "headline_cms_only_accuracy": cms_acc,
+        "headline_cms_bridges_accuracy": bridges_acc,
+        "bridge_helps_accuracy": all_results["summary"]["bridge_helps_accuracy"],
+        "bridge_helps_forgetting": all_results["summary"]["bridge_helps_forgetting"],
+        "total_settings": all_results["summary"]["total_settings"],
+    }
+    with open(os.path.join(ci_results_dir, "latest.json"), "w") as f:
+        json.dump(latest, f, indent=2)
+
+    badge = {
+        "schemaVersion": 1,
+        "label": f"bridge contribution @ reg={headline_strength} ({scale})",
+        "message": f"{improvement_pct:+.1f}%",
+        "color": _badge_color(
+            all_results["summary"]["bridge_helps_accuracy"],
+            all_results["summary"]["total_settings"],
+        ),
+    }
+    with open(os.path.join(ci_results_dir, "badge-regularization.json"), "w") as f:
+        json.dump(badge, f)
+
+    print(f"\nWrote {ci_results_dir}/latest.json, badge-regularization.json")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--ci",
+        action="store_true",
+        help="smoke test only: fast, hermetic fixture. Does NOT publish ci_results/ — "
+        "see CHANGELOG for why this experiment's bridge effect doesn't reliably show "
+        "the right direction below near-full-MNIST scale, unlike the GCL claims.",
+    )
+    parser.add_argument(
+        "--publish",
+        action="store_true",
+        help="write ci_results/latest.json + badge-regularization.json. Only meaningful "
+        "on a full (non --ci) run — see the ci-reproduce.yml 'reproduce-full' job.",
+    )
+    parser.add_argument(
+        "--reg-strengths",
+        type=float,
+        nargs="+",
+        default=None,
+        help="override the regularization strengths to sweep",
+    )
+    args = parser.parse_args()
+
+    if args.ci:
+        # Smoke test ONLY — proves the code path runs, not a claim. The bridge
+        # accuracy effect turned out to be a real scale-threshold phenomenon: even a
+        # 10x-larger-than-first-tried fixture (30k images) showed a *stable* wrong
+        # direction (bridges hurt accuracy in 5/5 settings), not noise around the
+        # true effect. Chasing a bigger fixture toward the right answer would mean
+        # committing something close to full MNIST anyway, defeating the point of a
+        # small fixture. See CHANGELOG. Never pass --publish with --ci.
+        config = BridgeAblationConfig(
+            num_epochs=3,
+            num_tasks=5,
+            reg_strengths=tuple(args.reg_strengths or (0.1, 5.0, 20.0)),
+            fixture_path=CI_FIXTURE_PATH,
+        )
+        scale = "ci-smoke-test"
+    else:
+        # Full scale, real MNIST download. Matches jasonstiltner.com's
+        # RegularizationChart.tsx exactly (5 points) by default. This is what the
+        # weekly 'reproduce-full' CI job runs with --publish, and what the Colab
+        # notebook runs interactively.
+        config = BridgeAblationConfig(
+            num_epochs=3,
+            num_tasks=5,
+            reg_strengths=tuple(args.reg_strengths or (0.1, 1.0, 5.0, 10.0, 20.0)),
+        )
+        scale = "full"
+
+    results = run_bridge_ablation(config)
+
+    if args.publish:
+        if args.ci:
+            raise SystemExit("--publish with --ci would overwrite the real badge with a "
+                              "known-unreliable smoke-test number — refusing.")
+        write_ci_results(results, scale)

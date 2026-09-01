@@ -1,0 +1,21 @@
+{
+  "generated_at": "2026-09-01T17:10:37.206439+00:00",
+  "commit_sha": "local",
+  "workflow_run_url": null,
+  "scale": "full",
+  "source": "benchmarks/run_bridge_ablation.py",
+  "reg_strengths": [
+    0.1,
+    1.0,
+    5.0,
+    10.0,
+    20.0
+  ],
+  "headline_strength": 5.0,
+  "headline_improvement_pct": 88.50102669404517,
+  "headline_cms_only_accuracy": 0.09823499747856783,
+  "headline_cms_bridges_accuracy": 0.18517397881996975,
+  "bridge_helps_accuracy": 5,
+  "bridge_helps_forgetting": 1,
+  "total_settings": 5
+}

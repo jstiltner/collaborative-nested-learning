@@ -1,0 +1,79 @@
+name: CI-Reproduce bridge ablation
+
+# Two jobs, deliberately different cadence and scale — see CHANGELOG for why:
+#
+# - smoke-test: every push to main. Fast (~2 min), hermetic (committed MNIST fixture,
+#   no download), proves the code path still runs. Does NOT publish ci_results/ — this
+#   experiment's bridge-accuracy effect turned out to be a genuine scale-threshold
+#   phenomenon, not noise-around-the-true-effect, so a small-fixture run is not a
+#   reliable stand-in for the published claim.
+# - reproduce-full: weekly + manual dispatch only. Downloads real MNIST, runs the same
+#   5-point sweep as jasonstiltner.com's chart, publishes ci_results/latest.json and the
+#   badge shown in README.md and on the site. This is the one that actually backs the
+#   "+89%" claim going forward.
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "42 7 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ci-reproduce-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  smoke-test:
+    name: Smoke test (fixture, every push)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run bridge ablation on the committed CI fixture (no --publish)
+        run: python -m benchmarks.run_bridge_ablation --ci
+
+  reproduce-full:
+    name: Reproduce full-scale (weekly, publishes the badge)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Cache MNIST download
+        uses: actions/cache@v4
+        with:
+          path: ./data/MNIST
+          key: mnist-raw-v1
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run full-scale bridge ablation (real MNIST, ~2-3 min)
+        run: python -m benchmarks.run_bridge_ablation --publish
+
+      - name: Commit ci_results if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ci_results/
+          if git diff --cached --quiet; then
+            echo "No change in ci_results/ — nothing to commit."
+          else
+            git commit -m "ci: refresh CI-reproduced bridge ablation stats [skip ci]"
+            git push
+          fi
