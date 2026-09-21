@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-14T14:34:37.422965+00:00",
-  "commit_sha": "16b1a73aec6b7fd2bc7ba5adc2af52a6137a5942",
-  "workflow_run_url": "https://github.com/jstiltner/collaborative-nested-learning/actions/runs/34855332679",
+  "generated_at": "2026-09-21T14:37:18.147947+00:00",
+  "commit_sha": "a2d08b78f97b52a55637985ac94b1a6348fbec20",
+  "workflow_run_url": "https://github.com/jstiltner/collaborative-nested-learning/actions/runs/35612744655",
   "scale": "full",
   "source": "benchmarks/run_bridge_ablation.py",
   "reg_strengths": [
@@ -12,9 +12,9 @@
     20.0
   ],
   "headline_strength": 5.0,
-  "headline_improvement_pct": 88.60369609856261,
+  "headline_improvement_pct": 88.50102669404517,
   "headline_cms_only_accuracy": 0.09823499747856783,
-  "headline_cms_bridges_accuracy": 0.1852748361069087,
+  "headline_cms_bridges_accuracy": 0.18517397881996975,
   "bridge_helps_accuracy": 5,
   "bridge_helps_forgetting": 1,
   "total_settings": 5
