@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-09-28T16:06:11.023928+00:00",
-  "commit_sha": "1a771f55ac5d217cd48b0a069959c251d1e1d94b",
-  "workflow_run_url": "https://github.com/jstiltner/collaborative-nested-learning/actions/runs/36447268071",
+  "generated_at": "2026-10-05T16:32:14.586478+00:00",
+  "commit_sha": "d8c42917e8abfbf947e2bab49f48423a2e6ec1e1",
+  "workflow_run_url": "https://github.com/jstiltner/collaborative-nested-learning/actions/runs/37340245484",
   "scale": "full",
   "source": "benchmarks/run_bridge_ablation.py",
   "reg_strengths": [
